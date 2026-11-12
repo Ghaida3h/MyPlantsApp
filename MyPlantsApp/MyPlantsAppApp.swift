@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct MyPlantsAppApp: App {
+    @State private var viewModel = PlantViewModel()
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(viewModel)
+                .preferredColorScheme(.dark)
         }
     }
 }
