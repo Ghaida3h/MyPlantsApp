@@ -17,6 +17,8 @@ struct SetReminderView: View {
     @State private var selectedWateringDays = "Every day"
     @State private var selectedWater = "20-50 ml"
     
+    var editingIndex: Int? = nil
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 20)
@@ -28,11 +30,14 @@ struct SetReminderView: View {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(Color.gray.opacity(0.3))
-                        .clipShape(Circle())
+                        .frame(width: 50, height: 50)
+                        .background {
+                            Circle()
+                                .fill(Color(red: 0.16, green: 0.16, blue: 0.17))
+                                .glassEffect(.regular, in: .circle)
+                        }
                 }
-                
+                .buttonStyle(.plain)
                 
                 
                 
@@ -51,9 +56,16 @@ struct SetReminderView: View {
                         room: selectedRoom,
                         light: selectedLight,
                         wateringDays: selectedWateringDays,
-                        waterAmount: "Medium"
+                        waterAmount: selectedWater
                     )
-                    viewModel.addPlant(plant: newPlant)
+                    if let editingIndex = editingIndex {
+                        viewModel.updatePlant(at: editingIndex, with: newPlant)
+                    } else {
+                        viewModel.addPlant(plant: newPlant)
+                        viewModel.requestNotificationPermission(for: newPlant)
+                    }
+                    
+
                     didSavePlant = true
                     dismiss()
                 } label: {
@@ -61,10 +73,10 @@ struct SetReminderView: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(width: 36, height: 36)
-                        .background(Color(red: 40/255, green: 127/255, blue: 104/255))
-                        .clipShape(Circle())
-                  
-                }
+                        }
+                .buttonStyle(.glassProminent)
+                .tint(Color(red: 40/255, green: 127/255, blue: 104/255))
+                .buttonBorderShape(.circle)
             }
             HStack(spacing: 8) {
                 Text("Plant Name")
@@ -75,8 +87,9 @@ struct SetReminderView: View {
                     .tint(.mint)
             }
             .padding()
-            .background(Color.gray.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .background(Color.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+            .padding(.bottom, 25)
             
             
             
@@ -101,6 +114,7 @@ struct SetReminderView: View {
                     .labelsHidden()
                     .pickerStyle(.menu)
                     .tint(.gray)
+                    
                     
                 }
                 .padding()
@@ -128,8 +142,9 @@ struct SetReminderView: View {
                 
                 
             }
-            .background(Color.gray.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .background(Color.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+            .padding(.bottom, 25)
             
             VStack(spacing: 0) {
                 HStack {
@@ -173,14 +188,50 @@ struct SetReminderView: View {
                 }
                 .padding()
             }
-            .background(Color.gray.opacity(0.2))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .background(Color.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+            
+            
+            if let editingIndex = editingIndex {
+               
+
+                Button {
+                    viewModel.deletePlant(at: editingIndex)
+                    dismiss()
+                } label: {
+                    Text("Delete Reminder")
+                        .font(.system(size: 16))
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
+                        .buttonStyle(.glass)
+                        .buttonBorderShape(.roundedRectangle(radius: 20))
+                        .padding(.top, 25)
+                }
+            }
+            
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Color(red: 0.12, green: 0.12, blue: 0.13))
         .foregroundStyle(.white)
+        .onAppear {
+            loadPlantData()
+        }
     }
+    
+    private func loadPlantData() {
+        guard let editingIndex = editingIndex else { return }
+
+        let plant = viewModel.plants[editingIndex]
+
+        plantName = plant.name
+        selectedRoom = plant.room
+        selectedLight = plant.light
+        selectedWateringDays = plant.wateringDays
+        selectedWater = plant.waterAmount    }
 }
     
     

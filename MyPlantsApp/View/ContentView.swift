@@ -17,7 +17,7 @@ struct ContentView: View {
         if showMyPlants {
             MyPlantsHomeView()
         } else {
-            VStack(spacing: 20) {
+            VStack(spacing: 25) {
                 
                 
                 //title
@@ -37,32 +37,34 @@ struct ContentView: View {
                 Image("plant")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 230, height: 230)
+                    .padding(.bottom, 15)
+                    
                 
                 Text("Start your plant journey!")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
+                    .padding(.bottom, 5)
                 
                 Text("Now all your plants will be in one place and we will help you take care of them :)🪴")
                     .font(.system(size: 18))
                     .foregroundStyle(.gray)
                     .multilineTextAlignment(.center)
+                    .padding(.bottom, 70)
                 
                 
-                Button("Set Plant Reminder") {
+                Button {
                     showSheet = true
+                } label: {
+                    Text("Set Plant Reminder")
+                        .font(.system(size: 17, weight: .medium))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 40)
                 }
-                
-                .buttonStyle(.borderedProminent)
-                .tint(
-                    Color(
-                        red: 40/255,
-                        green: 127/255,
-                        blue: 104/255
-                    )
-                )
-                .controlSize(.large)
+                .buttonStyle(.glassProminent)
+                .tint(Color(red: 40/255, green: 127/255, blue: 104/255))
+               
                 
                 Spacer()
             }
