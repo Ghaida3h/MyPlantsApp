@@ -27,9 +27,8 @@ Planto is a plant care reminder app that helps users organize their plants, trac
 
 | Start Screen | Set Reminder |
 |---|---|
-| ![Start Screen](Screenshots/StartScreen.PNG) | ![Set Reminder](Screenshots/SetReminder.PNG) |
+| ![Start Screen](MyPlantsApp/Screenshots/StartScreen.PNG) | ![Set Reminder](MyPlantsApp/Screenshots/SetReminder.PNG) |
 
 | My Plants | All Done |
 |---|---|
-| ![My Plants](Screenshots/MyPlants.PNG) | ![All Done](Screenshots/AllDone.PNG) |
-  
+| ![My Plants](MyPlantsApp/Screenshots/MyPlants.PNG) | ![All Done](MyPlantsApp/Screenshots/AllDone.PNG) |
