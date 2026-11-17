@@ -20,7 +20,6 @@ struct ContentView: View {
             VStack(spacing: 25) {
                 
                 
-                //title
                 VStack(alignment: .leading, spacing: 20) {
                     Text("My Plants 🌱")
                         .font(.system(size: 36))

@@ -39,11 +39,14 @@ class PlantViewModel{
     }
     
     func deletePlant(at index: Int) {
+        guard plants.indices.contains(index) else { return }
+        
         let plant = plants[index]
         cancelWateringNotification(for: plant)
         plants.remove(at: index)
         savePlants()
     }
+    
     
     func updatePlant(at index: Int, with updatedPlant: Plant) {
         let oldPlant = plants[index]
@@ -53,11 +56,33 @@ class PlantViewModel{
         var editedPlant = updatedPlant
         editedPlant.id = oldPlant.id
         editedPlant.isWatered = oldPlant.isWatered
+        editedPlant.lastWateredDate = oldPlant.lastWateredDate
 
         plants[index] = editedPlant
         savePlants()
 
         requestNotificationPermission(for: editedPlant)
+    }
+    
+    
+    func toggleWatered(for plantID: UUID) {
+        guard let index = plants.firstIndex(where: { $0.id == plantID }) else {
+            return
+        }
+
+        plants[index].isWatered.toggle()
+
+        if plants[index].isWatered {
+            plants[index].lastWateredDate = Date()
+        } else {
+            plants[index].lastWateredDate = nil
+        }
+
+        savePlants()
+
+        let updatedPlant = plants[index]
+        cancelWateringNotification(for: updatedPlant)
+        scheduleWateringNotification(for: updatedPlant)
     }
     
     func requestNotificationPermission(for plant: Plant) {
@@ -76,26 +101,7 @@ class PlantViewModel{
                 }
             }
     }
-    func sendTestNotification() {
-        let content = UNMutableNotificationContent()
-
-        content.title = "Time to water your plant! 🌱"
-        content.body = "Your plant is waiting for a sip 💧"
-        content.sound = .default
-
-        let trigger = UNTimeIntervalNotificationTrigger(
-            timeInterval: 10,
-            repeats: false
-        )
-
-        let request = UNNotificationRequest(
-            identifier: "testNotification",
-            content: content,
-            trigger: trigger
-        )
-
-        UNUserNotificationCenter.current().add(request)
-    }
+    
     func wateringInterval(for days: String) -> Int {
         switch days {
         case "Every day":
@@ -116,6 +122,8 @@ class PlantViewModel{
     }
     
     func refreshWateringStatus() {
+        var hasChanges = false
+
         for index in plants.indices {
             let plant = plants[index]
 
@@ -132,8 +140,12 @@ class PlantViewModel{
                 to: lastDate
             ), Date() >= nextDate {
                 plants[index].isWatered = false
-                savePlants()
+                hasChanges = true
             }
+        }
+
+        if hasChanges {
+            savePlants()
         }
     }
     func scheduleWateringNotification(for plant: Plant) {

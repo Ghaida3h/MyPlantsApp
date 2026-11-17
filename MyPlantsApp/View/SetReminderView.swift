@@ -52,7 +52,7 @@ struct SetReminderView: View {
                 
                 Button {
                     let newPlant = Plant(
-                        name: plantName,
+                        name: plantName.trimmingCharacters(in: .whitespacesAndNewlines),
                         room: selectedRoom,
                         light: selectedLight,
                         wateringDays: selectedWateringDays,
@@ -77,6 +77,7 @@ struct SetReminderView: View {
                 .buttonStyle(.glassProminent)
                 .tint(Color(red: 40/255, green: 127/255, blue: 104/255))
                 .buttonBorderShape(.circle)
+                .disabled(plantName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
 
                 ScrollView {
@@ -229,7 +230,10 @@ struct SetReminderView: View {
     }
     
     private func loadPlantData() {
-        guard let editingIndex = editingIndex else { return }
+        guard let editingIndex = editingIndex,
+              viewModel.plants.indices.contains(editingIndex) else {
+            return
+        }
 
         let plant = viewModel.plants[editingIndex]
 
@@ -237,7 +241,8 @@ struct SetReminderView: View {
         selectedRoom = plant.room
         selectedLight = plant.light
         selectedWateringDays = plant.wateringDays
-        selectedWater = plant.waterAmount    }
+        selectedWater = plant.waterAmount
+    }
 }
     
     

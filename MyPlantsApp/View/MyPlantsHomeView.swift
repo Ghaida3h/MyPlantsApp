@@ -86,19 +86,13 @@ struct MyPlantsHomeView: View {
                     
                     List {
                         ForEach(viewModel.plants) { plant in
-                            if let index = viewModel.plants.firstIndex(where: { $0.id == plant.id }) {
+                            if viewModel.plants.contains(where: {
+                                $0.id == plant.id
+                            }) {
                                 
                                 HStack(spacing: 20) {
                                     Button {
-                                        viewModel.plants[index].isWatered.toggle()
-                                        
-                                        if viewModel.plants[index].isWatered {
-                                            viewModel.plants[index].lastWateredDate = Date()
-                                        } else {
-                                            viewModel.plants[index].lastWateredDate = nil
-                                        }
-                                        
-                                        viewModel.savePlants()
+                                        viewModel.toggleWatered(for: plant.id)
                                     } label: {
                                         Image(systemName: plant.isWatered ? "checkmark.circle.fill" : "circle")
                                             .font(.system(size: 28))
@@ -114,7 +108,9 @@ struct MyPlantsHomeView: View {
                                             .foregroundStyle(.gray)
                                         
                                         Button {
-                                            editingPlantIndex = index
+                                            editingPlantIndex = viewModel.plants.firstIndex {
+                                                $0.id == plant.id
+                                            }
                                         } label: {
                                             Text(plant.name)
                                                 .font(.system(size: 30))
@@ -148,7 +144,9 @@ struct MyPlantsHomeView: View {
                                 
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                     Button(role: .destructive) {
-                                        viewModel.deletePlant(at: index)
+                                        if let currentIndex = viewModel.plants.firstIndex(where: { $0.id == plant.id }) {
+                                            viewModel.deletePlant(at: currentIndex)
+                                        }
                                     } label: {
                                         Image(systemName: "trash")
                                     }
