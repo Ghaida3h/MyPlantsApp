@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Plant {
+struct Plant: Codable, Identifiable {
     var id: UUID = UUID()
     var name: String
     var room: String
@@ -15,4 +15,5 @@ struct Plant {
     var wateringDays: String
     var waterAmount: String
     var isWatered: Bool = false
+    var lastWateredDate: Date? = nil
 }

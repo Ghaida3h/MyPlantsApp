@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyPlantsHomeView: View {
     @Environment(PlantViewModel.self) private var viewModel
+    @Environment(\.scenePhase) private var scenePhase
     @State private var showAddPlant = false
     @State private var editingPlantIndex: Int? = nil
     
@@ -84,75 +85,83 @@ struct MyPlantsHomeView: View {
                         .animation(.easeInOut(duration: 0.4), value: wateringProgress)
                     
                     List {
-                        ForEach(viewModel.plants.indices, id: \.self) { index in
-                            let plant = viewModel.plants[index]
-                            
-                            HStack(spacing: 20) {
-                                Button {
-                                    viewModel.plants[index].isWatered.toggle()
-                                } label: {
-                                    Image(systemName: plant.isWatered ? "checkmark.circle.fill" : "circle")
-                                        .font(.system(size: 28))
-                                        .foregroundStyle(
-                                            plant.isWatered ? Color.mint : Color.gray
-                                        )
-                                }
-                                .buttonStyle(.plain)
+                        ForEach(viewModel.plants) { plant in
+                            if let index = viewModel.plants.firstIndex(where: { $0.id == plant.id }) {
                                 
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Label("in \(plant.room)", systemImage: "location")
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.gray)
-                                    
+                                HStack(spacing: 20) {
                                     Button {
-                                        editingPlantIndex = index
+                                        viewModel.plants[index].isWatered.toggle()
+                                        
+                                        if viewModel.plants[index].isWatered {
+                                            viewModel.plants[index].lastWateredDate = Date()
+                                        } else {
+                                            viewModel.plants[index].lastWateredDate = nil
+                                        }
+                                        
+                                        viewModel.savePlants()
                                     } label: {
-                                        Text(plant.name)
-                                            .font(.system(size: 30))
-                                            .foregroundStyle(.white)
+                                        Image(systemName: plant.isWatered ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 28))
+                                            .foregroundStyle(
+                                                plant.isWatered ? Color.mint : Color.gray
+                                            )
                                     }
                                     .buttonStyle(.plain)
                                     
-                                    HStack(spacing: 10) {
-                                        Label(plant.light, systemImage: "sun.max")
-                                            .foregroundStyle(Color(red: 0.95, green: 0.87, blue: 0.65))
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 5)
-                                            .background(Color.gray.opacity(0.2))
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Label("in \(plant.room)", systemImage: "location")
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(.gray)
                                         
+                                        Button {
+                                            editingPlantIndex = index
+                                        } label: {
+                                            Text(plant.name)
+                                                .font(.system(size: 30))
+                                                .foregroundStyle(.white)
+                                        }
+                                        .buttonStyle(.plain)
                                         
+                                        HStack(spacing: 10) {
+                                            Label(plant.light, systemImage: "sun.max")
+                                                .foregroundStyle(Color(red: 0.95, green: 0.87, blue: 0.65))
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 5)
+                                                .background(Color.gray.opacity(0.2))
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            
+                                            
+                                            
+                                            Label(plant.waterAmount, systemImage: "drop")
+                                                .foregroundStyle(Color(red: 0.68, green: 0.85, blue: 0.95))
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 5)
+                                                .background(Color.gray.opacity(0.2))
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        }
+                                        .font(.system(size: 14))
                                         
-                                        Label(plant.waterAmount, systemImage: "drop")
-                                            .foregroundStyle(Color(red: 0.68, green: 0.85, blue: 0.95))
-                                            .padding(.horizontal, 10)
-                                            .padding(.vertical, 5)
-                                            .background(Color.gray.opacity(0.2))
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
                                     }
-                                    .font(.system(size: 14))
                                     
+                                    Spacer()
                                 }
                                 
-                                Spacer()
-                            }
-                            
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button(role: .destructive) {
-                                    viewModel.deletePlant(at: index)
-                                } label: {
-                                    Image(systemName: "trash")
+                                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                    Button(role: .destructive) {
+                                        viewModel.deletePlant(at: index)
+                                    } label: {
+                                        Image(systemName: "trash")
+                                    }
+                                    .tint(.red)
                                 }
-                                .tint(.red)
+                                
+                                .listRowBackground(Color.black)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(
+                                    EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
+                                )
+                                
                             }
-                            
-                            .listRowBackground(Color.black)
-                            .listRowSeparator(.hidden)
-                            .listRowInsets(
-                                EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0)
-                            )
-                            
-                            
                             
                         } // End ForEach
 
@@ -195,6 +204,14 @@ struct MyPlantsHomeView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         
         .background(Color.black)
+        .onAppear {
+            viewModel.refreshWateringStatus()
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            if newPhase == .active {
+                viewModel.refreshWateringStatus()
+            }
+        }
         .sheet(isPresented: $showAddPlant) {
             SetReminderView(didSavePlant: .constant(false))
                 .presentationBackground(

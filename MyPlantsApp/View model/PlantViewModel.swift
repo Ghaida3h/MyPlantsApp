@@ -11,15 +11,38 @@ import UserNotifications
 class PlantViewModel{
     var plants:[Plant]=[]
     
+    init() {
+        loadPlants()
+    }
     
-    func addPlant(plant:Plant){
+    func savePlants() {
+        if let data = try? JSONEncoder().encode(plants) {
+            UserDefaults.standard.set(data, forKey: "savedPlants")
+        }
+    }
+    
+    func loadPlants() {
+        guard let data = UserDefaults.standard.data(forKey: "savedPlants"),
+              let savedPlants = try? JSONDecoder().decode([Plant].self, from: data)
+        else {
+            return
+        }
+
+        plants = savedPlants
+        refreshWateringStatus()
+    }
+    
+    
+    func addPlant(plant: Plant) {
         plants.append(plant)
+        savePlants()
     }
     
     func deletePlant(at index: Int) {
         let plant = plants[index]
         cancelWateringNotification(for: plant)
         plants.remove(at: index)
+        savePlants()
     }
     
     func updatePlant(at index: Int, with updatedPlant: Plant) {
@@ -32,6 +55,7 @@ class PlantViewModel{
         editedPlant.isWatered = oldPlant.isWatered
 
         plants[index] = editedPlant
+        savePlants()
 
         requestNotificationPermission(for: editedPlant)
     }
@@ -90,6 +114,28 @@ class PlantViewModel{
             return 1
         }
     }
+    
+    func refreshWateringStatus() {
+        for index in plants.indices {
+            let plant = plants[index]
+
+            guard plant.isWatered,
+                  let lastDate = plant.lastWateredDate else {
+                continue
+            }
+
+            let days = wateringInterval(for: plant.wateringDays)
+
+            if let nextDate = Calendar.current.date(
+                byAdding: .day,
+                value: days,
+                to: lastDate
+            ), Date() >= nextDate {
+                plants[index].isWatered = false
+                savePlants()
+            }
+        }
+    }
     func scheduleWateringNotification(for plant: Plant) {
         let days = wateringInterval(for: plant.wateringDays)
 
@@ -118,9 +164,16 @@ class PlantViewModel{
         }
     }
     func cancelWateringNotification(for plant: Plant) {
+        let id = plant.id.uuidString
+
         UNUserNotificationCenter.current()
             .removePendingNotificationRequests(
-                withIdentifiers: [plant.id.uuidString]
+                withIdentifiers: [id]
+            )
+
+        UNUserNotificationCenter.current()
+            .removeDeliveredNotifications(
+                withIdentifiers: [id]
             )
     }
     

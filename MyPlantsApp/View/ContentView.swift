@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var showSheet = false
-    @State private var showMyPlants = false
+    @AppStorage("hasStartedJourney") private var showMyPlants = false
     @State private var didSavePlant = false
     
     var body: some View {

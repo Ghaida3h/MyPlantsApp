@@ -1,15 +1,7 @@
 {
-  "fill-specializations" : [
-    {
-      "value" : {
-        "solid" : "extended-gray:1.00000,1.00000"
-      }
-    },
-    {
-      "appearance" : "dark",
-      "value" : "system-dark"
-    }
-  ],
+  "fill" : {
+    "solid" : "display-p3:0.10327,0.10010,0.10004,1.00000"
+  },
   "groups" : [
     {
       "layers" : [

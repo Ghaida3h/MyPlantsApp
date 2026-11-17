@@ -77,139 +77,145 @@ struct SetReminderView: View {
                 .buttonStyle(.glassProminent)
                 .tint(Color(red: 40/255, green: 127/255, blue: 104/255))
                 .buttonBorderShape(.circle)
-            }
-            HStack(spacing: 8) {
-                Text("Plant Name")
-                    .foregroundStyle(.white)
-
-                TextField("Pothos", text: $plantName)
-                    .foregroundStyle(.white)
-                    .tint(.mint)
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-            .padding(.bottom, 25)
-            
-            
-            
-            VStack(spacing: 0) {
-                
-                HStack{
-                    Label("Room", systemImage: "location")
-                    
-                    
-                    
-                    
-                    
-                    Spacer()
-                    
-                    Picker("Room", selection: $selectedRoom) {
-                        Text("Bedroom").tag("Bedroom")
-                        Text("Living Room").tag("Living Room")
-                        Text("Kitchen").tag("Kitchen")
-                        Text("Balcony").tag("Balcony")
-                        Text("Bathroom").tag("Bathroom")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .tint(.gray)
-                    
-                    
                 }
-                .padding()
-                
-                Divider()
-                    .overlay(Color.gray.opacity(0.5))
-                    .padding(.horizontal, 16)
-                
-                
-                HStack {
-                    Label("Light", systemImage: "sun.max")
-                    
-                    Spacer()
-                    
-                    Picker("Light", selection: $selectedLight) {
-                        Text("Full Sun").tag("Full Sun")
-                        Text("Partial Sun").tag("Partial Sun")
-                        Text("Low Light").tag("Low Light")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .tint(.gray)
-                }
-                .padding()
-                
-                
-            }
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-            .padding(.bottom, 25)
-            
-            VStack(spacing: 0) {
-                HStack {
-                    Label("Watering Days", systemImage: "drop")
 
-                    Spacer()
-
-                    Picker("Watering Days", selection: $selectedWateringDays) {
-                        Text("Every day").tag("Every day")
-                        Text("Every 2 days").tag("Every 2 days")
-                        Text("Every 3 days").tag("Every 3 days")
-                        Text("Once a week").tag("Once a week")
-                        Text("Every 10 days").tag("Every 10 days")
-                        Text("Every 2 weeks").tag("Every 2 weeks")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .tint(.gray)
-                }
-                .padding()
-                
-                
-                Divider()
-                    .overlay(Color.gray.opacity(0.5))
-                    .padding(.horizontal, 16)
-
-                HStack {
-                    Label("Water", systemImage: "drop")
-
-                    Spacer()
-
-                    Picker("Water", selection: $selectedWater) {
-                        Text("20-50 ml").tag("20-50 ml")
-                        Text("50-100 ml").tag("50-100 ml")
-                        Text("100-200 ml").tag("100-200 ml")
-                        Text("200-300 ml").tag("200-300 ml")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .tint(.gray)
-                }
-                .padding()
-            }
-            .background(Color.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-            
-            
-            if let editingIndex = editingIndex {
-               
-
-                Button {
-                    viewModel.deletePlant(at: editingIndex)
-                    dismiss()
-                } label: {
-                    Text("Delete Reminder")
-                        .font(.system(size: 16))
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        
+                        HStack(spacing: 8) {
+                            Text("Plant Name")
+                                .foregroundStyle(.white)
+                            
+                            TextField("Pothos", text: $plantName)
+                                .foregroundStyle(.white)
+                                .tint(.mint)
+                        }
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 30))
-                        .buttonStyle(.glass)
-                        .buttonBorderShape(.roundedRectangle(radius: 20))
-                        .padding(.top, 25)
-                }
+                        .padding(.bottom, 25)
+                        
+                        
+                        
+                        VStack(spacing: 0) {
+                            
+                            HStack{
+                                Label("Room", systemImage: "location")
+                                
+                                
+                                
+                                
+                                
+                                Spacer()
+                                
+                                Picker("Room", selection: $selectedRoom) {
+                                    Text("Bedroom").tag("Bedroom")
+                                    Text("Living Room").tag("Living Room")
+                                    Text("Kitchen").tag("Kitchen")
+                                    Text("Balcony").tag("Balcony")
+                                    Text("Bathroom").tag("Bathroom")
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .tint(.gray)
+                                
+                                
+                            }
+                            .padding()
+                            
+                            Divider()
+                                .overlay(Color.gray.opacity(0.5))
+                                .padding(.horizontal, 16)
+                            
+                            
+                            HStack {
+                                Label("Light", systemImage: "sun.max")
+                                
+                                Spacer()
+                                
+                                Picker("Light", selection: $selectedLight) {
+                                    Text("Full Sun").tag("Full Sun")
+                                    Text("Partial Sun").tag("Partial Sun")
+                                    Text("Low Light").tag("Low Light")
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .tint(.gray)
+                            }
+                            .padding()
+                            
+                            
+                        }
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
+                        .padding(.bottom, 25)
+                        
+                        VStack(spacing: 0) {
+                            HStack {
+                                Label("Watering Days", systemImage: "drop")
+                                
+                                Spacer()
+                                
+                                Picker("Watering Days", selection: $selectedWateringDays) {
+                                    Text("Every day").tag("Every day")
+                                    Text("Every 2 days").tag("Every 2 days")
+                                    Text("Every 3 days").tag("Every 3 days")
+                                    Text("Once a week").tag("Once a week")
+                                    Text("Every 10 days").tag("Every 10 days")
+                                    Text("Every 2 weeks").tag("Every 2 weeks")
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .tint(.gray)
+                            }
+                            .padding()
+                            
+                            
+                            Divider()
+                                .overlay(Color.gray.opacity(0.5))
+                                .padding(.horizontal, 16)
+                            
+                            HStack {
+                                Label("Water", systemImage: "drop")
+                                
+                                Spacer()
+                                
+                                Picker("Water", selection: $selectedWater) {
+                                    Text("20-50 ml").tag("20-50 ml")
+                                    Text("50-100 ml").tag("50-100 ml")
+                                    Text("100-200 ml").tag("100-200 ml")
+                                    Text("200-300 ml").tag("200-300 ml")
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .tint(.gray)
+                            }
+                            .padding()
+                        }
+                        .background(Color.gray.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
+                        
+                        
+                        if let editingIndex = editingIndex {
+                            
+                            
+                            Button {
+                                viewModel.deletePlant(at: editingIndex)
+                                dismiss()
+                            } label: {
+                                Text("Delete Reminder")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(.red)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.gray.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 30))
+                                    .buttonStyle(.glass)
+                                    .buttonBorderShape(.roundedRectangle(radius: 20))
+                                    .padding(.top, 25)
+                            }
+                        }
+                    }
             }
             
         }
