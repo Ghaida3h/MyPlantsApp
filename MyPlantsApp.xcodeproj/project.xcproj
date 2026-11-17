@@ -11,8 +11,21 @@
     ],
   },
   "files": [
-    { "kind": "folder", "path": "MyPlantsApp", "target-membership": [ "MyPlantsApp" ] },
     {
+      "kind": "folder",
+      "path": "MyPlantsApp",
+      "target-membership": [
+        "MyPlantsApp",
+      ],
+      "membership-exceptions": [
+        {
+          "target": "MyPlantsApp",
+          "exclusions": [
+            "README.md",
+          ],
+        },
+      ],
+    }, {
       "kind": "group",
       "name": "Products",
       "children": [
